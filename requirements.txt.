@@ -1,5 +1,7 @@
 streamlit
 folium
 streamlit-folium
+jinja2
+branca
 requests
 beautifulsoup4
