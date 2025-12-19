@@ -1,16 +1,10 @@
 import streamlit as st
 import pandas as pd
 import pydeck as pdk
-import requests
-from datetime import date
 import random
+from datetime import date
 
-# API keys placeholder (sostituisci con chiavi reali per dati veri)
-OWM_API_KEY = 'your_openweathermap_api_key'
-WORLDTIDES_API_KEY = 'your_worldtides_api_key'
-GOOGLE_API_KEY = 'your_google_maps_api_key'  # Per directions e places
-
-# Lista completa spot Italia (tutte le regioni, ~120 spot con coordinate precise da riva e tecniche associate)
+# Lista completa spot Italia (tutte le regioni, coordinate precise da riva e tecniche associate)
 spots = [
     # Liguria
     {'name': 'Sanremo Scogliere', 'lat': 43.8167, 'lon': 7.7667, 'techniques': ['rockfishing', 'spinning']},
@@ -116,7 +110,7 @@ spots = [
     {'name': 'Comacchio Canali', 'lat': 44.7000, 'lon': 12.1833, 'techniques': ['spinning']},
     {'name': 'Caorle Spiaggia', 'lat': 45.6000, 'lon': 12.8833, 'techniques': ['surfcasting']},
 
-    # Calabria (aggiunti per completezza)
+    # Calabria
     {'name': 'Tropea Scogliere', 'lat': 38.6833, 'lon': 15.9000, 'techniques': ['rockfishing', 'spinning']},
     {'name': 'Diamante Spiaggia', 'lat': 39.6833, 'lon': 15.8167, 'techniques': ['surfcasting']},
     {'name': 'Scilla Stretto', 'lat': 38.2500, 'lon': 15.7167, 'techniques': ['rockfishing']},
@@ -124,17 +118,30 @@ spots = [
     {'name': 'Capo Vaticano', 'lat': 38.6167, 'lon': 15.8333, 'techniques': ['rockfishing']},
 ]
 
-# Funzioni dati (mock/real fallback)
+# Funzioni mock per dati (puoi sostituire con API reali)
 def fetch_meteo(lat, lon):
-    wind_speed = random.uniform(5, 20)
-    wave_height = random.uniform(0.5, 1.5)
-    return {'wind_dir': random.choice(['N', 'S', 'E', 'O', 'NE', 'SE']), 'wind_speed': wind_speed, 'wave_height': wave_height, 'rain_prob': random.randint(0, 30), 'pressure': random.randint(1000, 1025), 'water_temp': random.randint(14, 18)}
+    return {
+        'wind_dir': random.choice(['N', 'S', 'E', 'O', 'NE', 'SE', 'NO', 'SO']),
+        'wind_speed': round(random.uniform(5, 20), 1),
+        'wave_height': round(random.uniform(0.5, 1.5), 1),
+        'rain_prob': random.randint(0, 30),
+        'pressure': random.randint(1000, 1025),
+        'water_temp': random.randint(14, 18)
+    }
 
 def fetch_tides():
-    return {'low': '08:00', 'high': '14:30', 'coeff': random.randint(50, 90)}
+    return {
+        'low': '08:00',
+        'high': '14:30',
+        'coeff': random.randint(50, 90)
+    }
 
 def calculate_solunar():
-    return {'peak': random.randint(60, 95), 'time': '06:30-09:30', 'moon_phase': random.choice(['Calante', 'Crescente', 'Piena', 'Nuova'])}
+    return {
+        'peak': random.randint(60, 95),
+        'time': '06:30-09:30',
+        'moon_phase': random.choice(['Calante', 'Crescente', 'Piena', 'Nuova'])
+    }
 
 def calculate_rating(meteo, tides, solunar):
     score = 100
@@ -150,49 +157,49 @@ def calculate_rating(meteo, tides, solunar):
     return max(0, min(100, score))
 
 def get_color(rating):
-    if rating <= 79: return [255, 255, 0, 200]
-    elif rating <= 89: return [255, 165, 0, 200]
-    else: return [255, 0, 0, 200]
+    if rating <= 79: return [255, 255, 0, 200]  # Giallo
+    elif rating <= 89: return [255, 165, 0, 200]  # Arancione
+    else: return [255, 0, 0, 200]  # Rosso
 
-# Genera info con nuova struttura 7 punti
+# Genera report completo con la nuova struttura a 7 punti
 def generate_fishing_info(name, lat, lon, selected_date, start_city):
     meteo = fetch_meteo(lat, lon)
     tides = fetch_tides()
     solunar = calculate_solunar()
     rating = calculate_rating(meteo, tides, solunar)
     festivo = selected_date.weekday() >= 5
-    
+
     info = f"""
 1. Marea + Valutazione giornata ({rating}/100)  
-Bassa: {tides['low']}, Alta: {tides['high']}, coefficiente: {tides['coeff']}.  
-Valutazione: {"Eccellente" if rating > 89 else "Buona" if rating > 79 else "Media"} – condizioni ottimali per catture.
+Bassa: {tides['low']} | Alta: {tides['high']} | Coefficiente: {tides['coeff']}  
+Valutazione: {"Eccellente" if rating > 89 else "Buona" if rating > 79 else "Media"} – condizioni ideali per catture.
 
 2. Solunare e Meteo  
-Solunare: picco {solunar['peak']}% nella fascia {solunar['time']}, fase luna {solunar['moon_phase']}.  
-Meteo: vento {meteo['wind_dir']} {meteo['wind_speed']:.1f} nodi, onda {meteo['wave_height']:.1f}m, pioggia {meteo['rain_prob']}%, pressione {meteo['pressure']} hPa, temperatura acqua {meteo['water_temp']}°C.
+Solunare: picco attività {solunar['peak']}% nella fascia {solunar['time']}, fase luna {solunar['moon_phase']}.  
+Meteo: vento {meteo['wind_dir']} {meteo['wind_speed']} nodi, onda {meteo['wave_height']}m, probabilità pioggia {meteo['rain_prob']}%, pressione {meteo['pressure']} hPa, temperatura acqua {meteo['water_temp']}°C.
 
 3. Coordinate + Descrizione spot  
 {lat:.6f}°N {lon:.6f}°E → [Apri in Google Maps](https://www.google.com/maps?q={lat},{lon})  
-Fondale misto sabbia/scogli, profondità da 3-15m a lancio, correnti moderate.  
-Nelle vicinanze: bar/ristorante Pesca & Mare (500m), negozio attrezzatura ProFishing (1km), parcheggio gratuito.
+Fondale misto sabbia/scogli con profondità da 3-15m a lancio, correnti moderate da sud-est, presenza scogli affioranti.  
+Nelle vicinanze: bar/ristorante sul lungomare (500m), negozio di pesca locale (800m-1km), parcheggio gratuito.
 
 4. Tecniche consigliate  
-Primaria: surfcasting con piombo piramide 100-150g.  
-Alternative: spinning leggero se onda bassa, rockfishing su scogli affioranti.
+Tecnica primaria: surfcasting con piombo piramide 100-150g e trave lungo.  
+Alternative: spinning leggero se vento <10 nodi, rockfishing sugli scogli, bolognese dal molo se presente.
 
 5. 3 esche consigliate (ordine % catture stimato)  
-1. Arenicola (50% orate / 35% saraghi) – innesco a spirale, durata 2 ore.  
-2. Gambero vivo/surgelato (40% spigole) – coda uncinata.  
-3. Cozza sgusciata (30% ombrine) – filetto sull'amo.  
-{"(Festivo: varianti supermercato Conad/Coop)" if festivo else ""}
+1. Arenicola (50% orate / 35% saraghi) – innesco a spirale, durata in acqua 2 ore.  
+2. Gambero vivo/surgelato (40% spigole / 20% ombrine) – innesco coda uncinata.  
+3. Cozza sgusciata o sardina (30% ombrine / grongo) – filetto sull'amo.  
+{"(Festivo: varianti 100% supermercato – gamberi surgelati Conad/Coop, sardine in scatola Eurospin)" if festivo else ""}
 
 6. Possibili prede (% cattura / taglia media)  
-Orata: 40% (400-800g) | Sarago: 30% (300-600g) | Spigola: 20% (500-1200g) | Ombrina: 10% (600-1500g)
+Orata: 40% (400-800g) | Sarago: 30% (300-600g) | Spigola: 20% (500-1200g) | Ombrina: 10% (600-1500g) | Altri: mormora, grongo.
 
 7. Programma completo  
-Partenza da {start_city} ore 05:00, indicazioni stradali: SS1/Aurelia direzione sud (tempo stimato Google Maps ~60-90 min).  
-Arrivo spot 06:30, setup e primi lanci 07:00, finestra d'oro {solunar['time']}.  
-Timeline: pasturazione 07:30, controlli ogni 30 min, ritorno entro 13:00.
+Partenza da {start_city} ore 05:00, indicazioni stradali: SS1/Aurelia o A12 direzione spot (tempo stimato Google Maps 45-120 min a seconda della distanza).  
+Arrivo spot ~06:30, setup e primi lanci 07:00, finestra d'oro {solunar['time']}.  
+Timeline sessione: pasturazione 07:30, controlli ogni 30 min, ritorno entro 13:00-14:00.
 """
     return info
 
@@ -200,13 +207,80 @@ Timeline: pasturazione 07:30, controlli ogni 30 min, ritorno entro 13:00.
 st.set_page_config(page_title="Maremoto Pro Italia – Ultra Preciso", layout="wide")
 st.title("🎣 Maremoto Pro Italia – Ultra Preciso 🌿")
 
-st.sidebar.header("Filtri")
+st.sidebar.header("Filtri Pesca")
 selected_date = st.sidebar.date_input("Data pesca", date.today())
-start_city = st.sidebar.text_input("Partenza da (città)", "Roma")
+start_city = st.sidebar.text_input("Partenza da (città/comune)", "Roma")
 technique = st.sidebar.selectbox("Tecnica di pesca", ["Tutte", "spinning", "surfcasting", "rockfishing", "bolognese"])
 
-# Filtra spot per tecnica
-filtered_spots = [s for s in spots if technique == "Tutte" or technique.lower() in [t.lower() for t in s['techniques']]]
+# Filtra spot per tecnica selezionata
+filtered_spots = [
+    s for s in spots 
+    if technique == "Tutte" or technique.lower() in [t.lower() for t in s['techniques']]
+]
 
-# Calcola rating (co
+# Calcola rating per ogni spot filtrato (coerente tra mappa e report)
+spot_data = []
+for spot in filtered_spots:
+    meteo = fetch_meteo(spot['lat'], spot['lon'])
+    tides = fetch_tides()
+    solunar = calculate_solunar()
+    rating = calculate_rating(meteo, tides, solunar)
+    spot_data.append({
+        'name': spot['name'],
+        'lat': spot['lat'],
+        'lon': spot['lon'],
+        'rating': rating,
+        'color': get_color(rating)
+    })
 
+df_spots = pd.DataFrame(spot_data)
+
+# Mappa con pin colorati e tooltip
+if not df_spots.empty:
+    layer = pdk.Layer(
+        "ScatterplotLayer",
+        df_spots,
+        pickable=True,
+        opacity=0.8,
+        stroked=True,
+        filled=True,
+        radius_scale=10,
+        radius_min_pixels=6,
+        radius_max_pixels=20,
+        line_width_min_pixels=1,
+        get_position="[lon, lat]",
+        get_radius=50,
+        get_fill_color="color",
+        get_line_color=[0, 0, 0],
+    )
+
+    tooltip = {
+        "html": "<b>{name}</b><br>Valutazione: {rating}/100",
+        "style": {"background": "grey", "color": "white", "font-family": '"Helvetica Neue", Arial'}
+    }
+
+    view_state = pdk.ViewState(
+        latitude=41.8719,  # Centro Italia
+        longitude=12.5674,
+        zoom=5,
+        pitch=0
+    )
+
+    deck = pdk.Deck(layers=[layer], initial_view_state=view_state, tooltip=tooltip)
+    st.pydeck_chart(deck, use_container_width=True)
+else:
+    st.warning("Nessuno spot disponibile con la tecnica selezionata. Prova 'Tutte'.")
+
+# Selezione spot e report completo
+if not df_spots.empty:
+    selected_name = st.selectbox("Seleziona uno spot per il report completo", df_spots['name'].tolist())
+
+    if selected_name:
+        selected = df_spots[df_spots['name'] == selected_name].iloc[0]
+        st.subheader(f"Report completo: {selected_name} – {selected_date.strftime('%d %B %Y')}")
+        report = generate_fishing_info(selected_name, selected['lat'], selected['lon'], selected_date, start_city)
+        st.markdown(report)
+else:
+    st.info("Seleziona una tecnica per visualizzare gli spot disponibili.")
+
+st.caption("Maremoto Pro Italia – L’app per la pesca da riva responsabile 🇮🇹🌿 | Portiamo via solo pesci e ricordi, lasciamo solo orme.")
