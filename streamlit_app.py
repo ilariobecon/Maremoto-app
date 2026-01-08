@@ -349,7 +349,8 @@ if not df_spots.empty:
         st.markdown(report)
 
 st.markdown("***Messaggio green:*** Porta via i tuoi rifiuti e, se puoi, anche quelli altrui. Un vero pescatore protegge il suo spot 🌿")
-st.caption("RivaPro – Pesca da Riva Responsabile 🇮🇹 | Versione aggiornata gennaio 2026")import streamlit as st
+st.caption("RivaPro – Pesca da Riva Responsabile 🇮🇹 | Versione aggiornata gennaio 2026")
+import streamlit as st
 import pandas as pd
 import pydeck as pdk
 import random
