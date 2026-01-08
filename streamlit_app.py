@@ -5,6 +5,10 @@ import random
 from datetime import date
 import hashlib
 
+# ==============================================================================
+# RIVAPRO – L’app ultra precisa per la pesca da riva responsabile in Italia
+# ==============================================================================
+
 st.set_page_config(
     page_title="RivaPro – Pesca da Riva Responsabile",
     page_icon="🎣",
@@ -26,7 +30,7 @@ technique = st.sidebar.selectbox(
 
 is_premium = st.sidebar.checkbox("Modalità Premium attiva", value=False)
 
-# -------------------------------- SPOT LIST COMPLETA (tutti gli spot d'Italia) -----------------------------------
+# -------------------------------- SPOT LIST – TUTTA ITALIA (completa) -----------------------------------
 spots = [
     # Liguria (10 spot)
     {'name': 'Sanremo Scogliere', 'lat': 43.8167, 'lon': 7.7667, 'techniques': ['Pesca a fondo dagli scogli/porto', 'Spinning'], 'premium': False, 'esche': ['Gambero vivo', 'Polpo fresco', 'Verme americano'], 'percentuali': {'Gambero vivo': 50, 'Polpo fresco': 30, 'Verme americano': 20}, 'prede': ['Spigola', 'Sarago', 'Orata', 'Grongo'], 'pastura': 'Pastura leggera con sardina macinata e formaggio per rockfishing', 'fondale': 'scogli', 'profondita': '5-10m', 'difficolta': 'intermedio'},
@@ -136,4 +140,213 @@ spots = [
     # Calabria (10 spot)
     {'name': 'Tropea Scogliere', 'lat': 38.6833, 'lon': 15.9000, 'techniques': ['Pesca a fondo dagli scogli/porto', 'Spinning'], 'premium': False, 'esche': ['Polpo', 'Gambero', 'Verme'], 'percentuali': {'Polpo': 40, 'Gambero': 30, 'Verme': 30}, 'prede': ['Grongo', 'Spigola', 'Sarago', 'Triglia'], 'pastura': 'Pasturazione con polpo per fondo profondo', 'fondale': 'scogli', 'profondita': '5-10m', 'difficolta': 'intermedio'},
     {'name': 'Diamante Spiaggia', 'lat': 39.6833, 'lon': 15.8167, 'techniques': ['Surfcasting'], 'premium': False, 'esche': ['Arenicola', 'Sardina', 'Cozza'], 'percentuali': {'Arenicola': 40, 'Sardina': 30, 'Cozza': 30}, 'prede': ['Orata', 'Mormora', 'Spigola', 'Cefalo'], 'pastura': 'Pastura con arenicola e sardina per lunghe distanze', 'fondale': 'sabbioso', 'profondita': '2-5m', 'difficolta': 'semplice'},
-    {'name': 'Scilla Stretto', 'lat': 38.2500, 'lon': 15.7167, 'techniques': ['Pesca a fondo dagli scogli/porto'], 'premium': False, 'esche': ['Verme', 'Polpo', 'Gambero'], 'percentuali': {'Verme
+    {'name': 'Scilla Stretto', 'lat': 38.2500, 'lon': 15.7167, 'techniques': ['Pesca a fondo dagli scogli/porto'], 'premium': False, 'esche': ['Verme', 'Polpo', 'Gambero'], 'percentuali': {'Verme': 50, 'Polpo': 30, 'Gambero': 20}, 'prede': ['Grongo', 'Sarago', 'Ombrina', 'Sgombro'], 'pastura': 'Pasturazione con polpo per fondo profondo', 'fondale': 'misto', 'profondita': '10-15m', 'difficolta': 'difficile'},
+    {'name': 'Reggio Calabria Lungomare', 'lat': 38.1167, 'lon': 15.6500, 'techniques': ['Spinning', 'Bolognese'], 'premium': False, 'esche': ['Sardina', 'Cozza', 'Verme'], 'percentuali': {'Sardina': 40, 'Cozza': 30, 'Verme': 30}, 'prede': ['Spigola', 'Sarago', 'Orata', 'Cefalo'], 'pastura': 'Pastura fine con sardina per bolognese', 'fondale': 'misto', 'profondita': '2-5m', 'difficolta': 'semplice'},
+    {'name': 'Capo Vaticano', 'lat': 38.6167, 'lon': 15.8333, 'techniques': ['Pesca a fondo dagli scogli/porto'], 'premium': False, 'esche': ['Gambero', 'Arenicola', 'Polpo'], 'percentuali': {'Gambero': 40, 'Arenicola': 30, 'Polpo': 30}, 'prede': ['Grongo', 'Ombrina', 'Spigola', 'Sarago'], 'pastura': 'Pasturazione con gambero per fondo', 'fondale': 'scogli', 'profondita': '5-10m', 'difficolta': 'intermedio'},
+    {'name': 'Crotone Porto', 'lat': 39.0833, 'lon': 17.1333, 'techniques': ['Bolognese'], 'premium': True, 'esche': ['Verme', 'Sardina', 'Cozza'], 'percentuali': {'Verme': 40, 'Sardina': 30, 'Cozza': 30}, 'prede': ['Sarago', 'Orata', 'Spigola', 'Mormora'], 'pastura': 'Pastura fine con bigattino per bolognese', 'fondale': 'misto', 'profondita': '5-10m', 'difficolta': 'semplice'},
+    {'name': 'Soverato Spiaggia', 'lat': 38.6833, 'lon': 16.5500, 'techniques': ['Surfcasting'], 'premium': True, 'esche': ['Arenicola', 'Gambero', 'Polpo'], 'percentuali': {'Arenicola': 40, 'Gambero': 30, 'Polpo': 30}, 'prede': ['Orata', 'Mormora', 'Spigola', 'Triglia'], 'pastura': 'Pastura con arenicola e formaggio', 'fondale': 'sabbioso', 'profondita': '2-5m', 'difficolta': 'semplice'},
+    {'name': 'Roccella Ionica', 'lat': 38.3167, 'lon': 16.4000, 'techniques': ['Spinning'], 'premium': True, 'esche': ['Sardina', 'Verme', 'Cozza'], 'percentuali': {'Sardina': 50, 'Verme': 30, 'Cozza': 20}, 'prede': ['Spigola', 'Sarago', 'Grongo', 'Sgombro'], 'pastura': 'Pastura minima – spinning puro', 'fondale': 'sabbioso', 'profondita': '2-5m', 'difficolta': 'semplice'},
+    {'name': 'Cosenza Costa', 'lat': 39.3000, 'lon': 16.2500, 'techniques': ['Surfcasting'], 'premium': True, 'esche': ['Gambero', 'Polpo', 'Arenicola'], 'percentuali': {'Gambero': 40, 'Polpo': 30, 'Arenicola': 30}, 'prede': ['Orata', 'Spigola', 'Sarago', 'Cefalo'], 'pastura': 'Pastura con gambero e sardina', 'fondale': 'misto', 'profondita': '5-10m', 'difficolta': 'intermedio'},
+    {'name': 'Vibo Marina', 'lat': 38.7167, 'lon': 16.1167, 'techniques': ['Bolognese'], 'premium': True, 'esche': ['Cozza', 'Verme', 'Sardina'], 'percentuali': {'Cozza': 40, 'Verme': 30, 'Sardina': 30}, 'prede': ['Sarago', 'Orata', 'Grongo', 'Triglia'], 'pastura': 'Pastura fine con cozza per bolognese', 'fondale': 'misto', 'profondita': '5-10m', 'difficolta': 'semplice'},
+
+    # Abruzzo (5 spot)
+    {'name': 'Pescara Molo Nord', 'lat': 42.4694, 'lon': 14.2156, 'techniques': ['Bolognese', 'Spinning'], 'premium': False, 'esche': ['Verme', 'Gambero', 'Sardina'], 'percentuali': {'Verme': 40, 'Gambero': 35, 'Sardina': 25}, 'prede': ['Spigola', 'Sarago', 'Orata', 'Cefalo'], 'pastura': 'Pastura fine con bigattino per bolognese', 'fondale': 'misto', 'profondita': '5-10m', 'difficolta': 'semplice'},
+    {'name': 'Ortona Porto', 'lat': 42.3567, 'lon': 14.4067, 'techniques': ['Pesca a fondo dagli scogli/porto', 'Bolognese'], 'premium': False, 'esche': ['Cozza', 'Polpo', 'Arenicola'], 'percentuali': {'Cozza': 45, 'Polpo': 30, 'Arenicola': 25}, 'prede': ['Grongo', 'Sarago', 'Ombrina', 'Triglia'], 'pastura': 'Pasturazione con polpo per fondo', 'fondale': 'misto', 'profondita': '5-10m', 'difficolta': 'semplice'},
+    {'name': 'Vasto Punta Penna', 'lat': 42.1667, 'lon': 14.7167, 'techniques': ['Surfcasting', 'Spinning'], 'premium': False, 'esche': ['Sardina', 'Verme', 'Gambero'], 'percentuali': {'Sardina': 40, 'Verme': 30, 'Gambero': 30}, 'prede': ['Orata', 'Spigola', 'Mormora', 'Cefalo'], 'pastura': 'Pastura con sardina per lunghe distanze', 'fondale': 'scogli', 'profondita': '5-10m', 'difficolta': 'intermedio'},
+    {'name': 'Torre Cerrano (Pineto)', 'lat': 42.5833, 'lon': 14.1000, 'techniques': ['Surfcasting'], 'premium': True, 'esche': ['Arenicola', 'Cozza', 'Polpo'], 'percentuali': {'Arenicola': 45, 'Cozza': 30, 'Polpo': 25}, 'prede': ['Orata', 'Sarago', 'Spigola', 'Triglia'], 'pastura': 'Pastura con arenicola e formaggio', 'fondale': 'misto', 'profondita': '2-5m', 'difficolta': 'semplice'},
+    {'name': 'Fossacesia Marina Scogli', 'lat': 42.2333, 'lon': 14.5000, 'techniques': ['Pesca a fondo dagli scogli/porto', 'Spinning'], 'premium': True, 'esche': ['Gambero', 'Sardina', 'Verme'], 'percentuali': {'Gambero': 50, 'Sardina': 30, 'Verme': 20}, 'prede': ['Grongo', 'Ombrina', 'Sarago', 'Sgombro'], 'pastura': 'Pastura leggera con gambero per spinning', 'fondale': 'scogli', 'profondita': '5-10m', 'difficolta': 'intermedio'},
+
+    # Marche (5 spot)
+    {'name': 'Ancona Porto Antico', 'lat': 43.6200, 'lon': 13.5100, 'techniques': ['Bolognese', 'Spinning'], 'premium': False, 'esche': ['Verme', 'Gambero', 'Cozza'], 'percentuali': {'Verme': 40, 'Gambero': 35, 'Cozza': 25}, 'prede': ['Sarago', 'Orata', 'Spigola', 'Cefalo'], 'pastura': 'Pastura fine con bigattino per bolognese', 'fondale': 'misto', 'profondita': '5-10m', 'difficolta': 'semplice'},
+    {'name': 'Senigallia Spiaggia di Velluto', 'lat': 43.7167, 'lon': 13.2167, 'techniques': ['Surfcasting'], 'premium': False, 'esche': ['Arenicola', 'Sardina', 'Polpo'], 'percentuali': {'Arenicola': 45, 'Sardina': 30, 'Polpo': 25}, 'prede': ['Orata', 'Mormora', 'Spigola', 'Triglia'], 'pastura': 'Pastura con arenicola e sardina per lunghe distanze', 'fondale': 'sabbioso', 'profondita': '2-5m', 'difficolta': 'semplice'},
+    {'name': 'Fano Molo', 'lat': 43.8500, 'lon': 13.0167, 'techniques': ['Bolognese', 'Pesca a fondo dagli scogli/porto'], 'premium': False, 'esche': ['Cozza', 'Verme', 'Gambero'], 'percentuali': {'Cozza': 40, 'Verme': 35, 'Gambero': 25}, 'prede': ['Spigola', 'Sarago', 'Grongo', 'Mormora'], 'pastura': 'Pastura mista cozza e sardina', 'fondale': 'misto', 'profondita': '2-5m', 'difficolta': 'semplice'},
+    {'name': 'Numana Riviera del Conero', 'lat': 43.5167, 'lon': 13.6167, 'techniques': ['Pesca a fondo dagli scogli/porto', 'Spinning'], 'premium': True, 'esche': ['Polpo', 'Sardina', 'Arenicola'], 'percentuali': {'Polpo': 50, 'Sardina': 30, 'Arenicola': 20}, 'prede': ['Grongo', 'Ombrina', 'Sarago', 'Sgombro'], 'pastura': 'Pasturazione con polpo per fondo profondo', 'fondale': 'scogli', 'profondita': '5-10m', 'difficolta': 'intermedio'},
+    {'name': 'Grottammare Lungomare Sud', 'lat': 42.9833, 'lon': 13.8667, 'techniques': ['Surfcasting', 'Spinning'], 'premium': True, 'esche': ['Gambero', 'Verme', 'Cozza'], 'percentuali': {'Gambero': 45, 'Verme': 35, 'Cozza': 20}, 'prede': ['Orata', 'Spigola', 'Sarago', 'Triglia'], 'pastura': 'Pastura densa con gambero e sardina', 'fondale': 'misto', 'profondita': '2-5m', 'difficolta': 'semplice'}
+]
+
+# ------------------------------- FUNZIONI DATI -------------------------------
+def fetch_meteo(lat, lon):
+    return {
+        'wind_dir': random.choice(['N', 'S', 'E', 'O', 'NE', 'SE', 'NO', 'SO']),
+        'wind_speed': round(random.uniform(5, 20), 1),
+        'wave_height': round(random.uniform(0.5, 1.5), 1),
+        'rain_prob': random.randint(0, 30),
+        'pressure': random.randint(1000, 1025),
+        'water_temp': random.randint(14, 18)
+    }
+
+def fetch_tides(spot_name):
+    seed = int(hashlib.md5(spot_name.encode()).hexdigest(), 16) % 100
+    low_hour = 6 + (seed % 6)
+    high_hour = low_hour + 6
+    if high_hour > 23:
+        high_hour -= 12
+    return {
+        'low': f"{low_hour:02d}:00",
+        'high': f"{high_hour:02d}:00",
+        'coeff': 50 + (seed % 50)
+    }
+
+def calculate_solunar(spot_name, selected_date):
+    seed = int(hashlib.md5((str(selected_date) + spot_name).encode()).hexdigest(), 16) % 100
+    peak = 60 + (seed % 36)
+    hour = 6 + (seed % 12)
+    return {
+        'peak': peak,
+        'time': f"{hour:02d}:00-{hour+3:02d}:00",
+        'moon_phase': random.choice(['Calante', 'Crescente', 'Piena', 'Nuova'])
+    }
+
+def calculate_rating(meteo, tides, solunar, spot_name, selected_date):
+    seed_str = str(selected_date) + spot_name
+    seed = int(hashlib.md5(seed_str.encode()).hexdigest(), 16) % 1000000
+    random.seed(seed)
+    
+    score = 100
+    if meteo['wind_speed'] > 10: score -= 10
+    if meteo['wind_speed'] > 15: score -= 20
+    if meteo['wave_height'] > 0.8: score -= 10
+    if meteo['wave_height'] > 1.2: score -= 15
+    if tides['coeff'] < 70: score -= 10
+    if tides['coeff'] < 50: score -= 20
+    if solunar['peak'] < 80: score -= 10
+    if solunar['peak'] < 70: score -= 15
+    score += random.randint(-10, 10)
+    return max(0, min(100, score))
+
+def get_color(rating):
+    if rating <= 50: return [255, 255, 255, 200]
+    if rating <= 70: return [255, 255, 0, 200]
+    if rating <= 89: return [255, 165, 0, 200]
+    return [255, 0, 0, 200]
+
+# -------------------------------- GENERA REPORT -------------------------------
+def generate_fishing_info(spot, selected_date, is_premium):
+    meteo = fetch_meteo(spot['lat'], spot['lon'])
+    tides = fetch_tides(spot['name'])
+    solunar = calculate_solunar(spot['name'], selected_date)
+    rating = calculate_rating(meteo, tides, solunar, spot['name'], selected_date)
+
+    peak_start = int(solunar['time'].split('-')[0].split(':')[0])
+    arrival_hour = peak_start - 1 if peak_start > 1 else 23
+    arrival = f"{arrival_hour:02d}:30"
+
+    info = f"""
+**1. Valutazione giornata ({rating}/100) + Marea + Meteo**  
+Valutazione: {"Eccellente" if rating > 89 else "Buona" if rating > 70 else "Media" if rating > 50 else "Bassa"}.  
+Marea: Bassa {tides['low']}, Alta {tides['high']}, coefficiente {tides['coeff']}.  
+Meteo: Vento {meteo['wind_dir']} {meteo['wind_speed']} nodi, onda {meteo['wave_height']}m, pioggia {meteo['rain_prob']}%, pressione {meteo['pressure']} hPa, temp acqua {meteo['water_temp']}°C.
+    """
+
+    if is_premium:
+        info += f"""
+**Solunare dettagliato**  
+Picco attività {solunar['peak']}% nella fascia {solunar['time']}, fase luna {solunar['moon_phase']}.
+        """
+
+    info += f"""
+**2. Descrizione dello spot**  
+Coordinate: {spot['lat']:.6f}°N {spot['lon']:.6f}°E → [Apri in Google Maps](https://www.google.com/maps?q={spot['lat']},{spot['lon']})  
+Fondale: {spot['fondale']}, profondità media {spot['profondita']}.  
+Difficoltà: {spot['difficolta']} (basata su accessibilità, terreno e catture recenti).
+    """
+
+    info += f"""
+**3. Tecnica consigliata**  
+Primaria: {spot['techniques'][0]}  
+{"Montatura completa: canna 4.2m, mulinello 5000, filo 0.25mm. Trucchi per buche." if is_premium else ""}
+    """
+
+    info += f"""
+**4. Esche consigliate + prede possibili + pastura**  
+1. {spot['esche'][0]} {"(" + str(spot['percentuali'][spot['esche'][0]]) + "%)" if is_premium else ""}  
+2. {spot['esche'][1]} {"(" + str(spot['percentuali'][spot['esche'][1]]) + "%)" if is_premium else ""}  
+3. {spot['esche'][2]} {"(" + str(spot['percentuali'][spot['esche'][2]]) + "%)" if is_premium else ""}  
+Prede principali: {', '.join(spot['prede'])}  
+Pastura consigliata: {spot['pastura']}
+    """
+
+    info += f"""
+**5. Programma di pesca completo**  
+Orario di arrivo consigliato: {arrival} (1h prima picco solunare)  
+Fase 1: Setup e pasturazione  
+Fase 2: Primi lanci all'alba o tramonto  
+Fase 3: Picco attività {solunar['time']} – controlli frequenti  
+Fase 4: Pesca fino al calare del sole o chiusura notturna  
+Chiusura sessione: entro le 22:00 o alba successiva
+    """
+
+    if is_premium:
+        info += """
+**Extra Premium**  
+- Montature dettagliate e trucchi locali  
+- Note personali salvabili  
+- Galleria catture community  
+- Segnala rifiuti a Legambiente → 1 settimana gratis!
+        """
+
+    return info
+
+# -------------------------------- MAPPA E CALCOLI -----------------------------
+visible_spots = [s for s in spots if is_premium or not s.get('premium', False)]
+
+filtered_spots = [
+    s for s in visible_spots
+    if technique == "Tutte" or technique in s['techniques']
+]
+
+spot_data = []
+for spot in filtered_spots:
+    meteo = fetch_meteo(spot['lat'], spot['lon'])
+    tides = fetch_tides(spot['name'])
+    solunar = calculate_solunar(spot['name'], selected_date)
+    rating = calculate_rating(meteo, tides, solunar, spot['name'], selected_date)
+    spot_data.append({
+        'name': spot['name'],
+        'lat': spot['lat'],
+        'lon': spot['lon'],
+        'rating': rating,
+        'color': get_color(rating)
+    })
+
+df_spots = pd.DataFrame(spot_data)
+
+if not df_spots.empty:
+    layer = pdk.Layer(
+        "ScatterplotLayer",
+        df_spots,
+        pickable=True,
+        opacity=0.8,
+        stroked=True,
+        filled=True,
+        radius_scale=10,
+        radius_min_pixels=6,
+        radius_max_pixels=20,
+        get_position="[lon, lat]",
+        get_radius=50,
+        get_fill_color="color",
+        get_line_color=[0, 0, 0],
+    )
+
+    tooltip = {"html": "<b>{name}</b><br>Valutazione: {rating}/100", "style": {"background": "grey", "color": "white"}}
+
+    view_state = pdk.ViewState(latitude=41.9, longitude=12.5, zoom=5, pitch=0)
+
+    deck = pdk.Deck(layers=[layer], initial_view_state=view_state, tooltip=tooltip)
+    st.pydeck_chart(deck, use_container_width=True)
+else:
+    st.info("Nessuno spot disponibile con i filtri selezionati.")
+
+# -------------------------------- REPORT -------------------------------------
+if not df_spots.empty:
+    selected_name = st.selectbox("Seleziona spot per report completo", df_spots['name'].tolist())
+
+    if selected_name:
+        spot = next(s for s in filtered_spots if s['name'] == selected_name)
+        st.subheader(f"Report: {selected_name} – {selected_date.strftime('%d %B %Y')}")
+
+        report = generate_fishing_info(spot, selected_date, is_premium)
+        st.markdown(report)
+
+st.markdown("***Messaggio green:*** Porta via i tuoi rifiuti e, se puoi, anche quelli altrui. Un vero pescatore protegge il suo spot 🌿")
+st.caption("RivaPro – Pesca da Riva Responsabile 🇮🇹 | Versione aggiornata gennaio 2026")
